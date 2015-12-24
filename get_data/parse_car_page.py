@@ -83,12 +83,16 @@ def get_city(parsed_page):
 	return city.split()[0]
 
 def get_milage(parsed_page):
-	milage = list(parsed_page.find_all(name = 'p', attrs = {'class':'item-param'}))[2].text
-	milage = remove_shit(milage)
-	milage = re.findall('\d+', milage)
-	if milage == []: milage = 0
-	else: milage = milage[0]
-	return milage 
+	data = list(parsed_page.find(name = 'div', attrs = {'class':'characteristic delimeter'}))
+	milage = 'NA'
+	for l in data:
+	    try:
+	        if 'Пробіг' in l.text:
+	            milage = ''.join(re.findall('[\d]', l.text))
+	            milage = int(milage)
+	    except:
+	        pass
+	return milage
 
 def get_body(parsed_page):
 	body = parsed_page.find_all(name = 'strong', attrs = {'id':'final_page__characteristic_body_name'})[0].string
@@ -97,8 +101,7 @@ def get_body(parsed_page):
 
 def get_car_type(parsed_page):
 	car_type = list(parsed_page.find(name = 'p', attrs = {'class':'item-param'}))[3].string
-	car_type = remove_shit(car_type)
-	return car_type
+	return remove_shit(car_type)
 
 def get_year(parsed_page):
 	return int(parsed_page.find_all(name = 'span', attrs = {'class':'year'})[0].string)
