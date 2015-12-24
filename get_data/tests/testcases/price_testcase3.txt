@@ -1,0 +1,9 @@
+<div class="price-cars">
+<div class="price-seller">
+<span class="price" style="font-weight: bold;">
+            
+                32 000 $
+                
+            </span>
+</div>
+</div>

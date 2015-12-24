@@ -1,0 +1,15 @@
+<div class="price-cars">
+<div class="price-seller">
+<span class="price" style="font-weight: bold;">
+            
+                775 040 грн.
+                
+            </span>
+</div>
+<div class="price-at-rate">
+                
+                    И<span class="price">28 255</span> /
+                    <span class="price">32 000 $</span>
+                    
+            </div>
+</div>
