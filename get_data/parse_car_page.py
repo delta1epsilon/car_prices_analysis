@@ -147,15 +147,24 @@ def parse_car_page(url):
 
 
 if __name__ == "__main__":
-	import logging
-	
+	import logging, argparse, os
+
+	current_dir = os.path.abspath(os.path.dirname(__file__))
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--links_in", type=str, dest = 'cars_links_filename',
+	                    default = "german_cars_links.csv", help="write file name with cars links")
+	parser.add_argument("--output_to", type=str, dest = 'output_filename',
+	                    default = "autoria_cars_data.csv", help="write output filename")
+	args = parser.parse_args()
+
 	logging.basicConfig(level=logging.INFO,
 						format='%(asctime)s %(levelname)-4s %(message)s',
 						datefmt='%H:%M:%S')
 	logger = logging.getLogger(__name__)
 	
 	logger.info('Reading csv with links on cars ...')
-	cars_links = pd.read_csv('german_cars_links.csv', nrows = 2000)#"ISO-8859-1"
+	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), nrows = 10)#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	logger.info('Parsing cars pages ...')
@@ -177,6 +186,6 @@ if __name__ == "__main__":
 		df['link'] = cars_links.link[i]
 		cars = cars.append(df, ignore_index = True)
 
-	file_name = 'autoria_german_cars_data.csv'
-	cars.to_csv(file_name)
-	logger.info('The data was saved into {0}'.format(file_name))
+	# file_name = 'autoria_german_cars_data.csv'
+	cars.to_csv(os.path.join(current_dir, args.output_filename))
+	logger.info('The data was saved into {0}'.format(args.output_filename))
