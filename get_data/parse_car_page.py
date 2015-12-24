@@ -38,15 +38,15 @@ def get_technical_characteristics(parsed_page):
 		elif char[0] == 'Привід:':
 			drive_type = char[1]
 		elif char[0] == 'Кількість дверей:':
-			doors = char[1]
+			doors = int(char[1])
 		elif char[0] == 'Кількість місць:':
-			seats = char[1]
+			seats = int(char[1])
 		elif char[0] == 'Колір:':
 			color = char[1]
 		elif char[0] == 'Паливо:':
 			fuel = char[1]
 		elif 'Об\'єм двигуна:' in char[0]:
-			engine_v = ''.join(re.findall('[\d.]', char[0]))
+			engine_v = int(''.join(re.findall('[\d.]', char[0])))
 
 	return transmission, drive_type, doors, color, seats, fuel, engine_v
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 	
 
 	logger.info('Reading csv with links on cars ...')
-	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), nrows = 1000)#"ISO-8859-1"
+	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), nrows = 10)#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	logger.info('Parsing cars pages ...')
