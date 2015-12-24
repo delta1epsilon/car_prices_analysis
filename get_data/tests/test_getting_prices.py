@@ -2,13 +2,13 @@ import unittest
 from bs4 import BeautifulSoup
 import urllib.request as ur
 
-import sys
-sys.path.append("..")
+import os
 
 from get_data.parse_car_page import get_prices
 
 def read_case(filename):
-	testcase = open('tests/testcases/'+ filename +'.txt')
+	current_dir = os.path.abspath(os.path.dirname(__file__))
+	testcase = open(os.path.join(current_dir, 'testcases', filename +'.txt'))
 	data = testcase.read()
 	testcase.close()
 	return BeautifulSoup(data, 'html.parser')
@@ -33,7 +33,4 @@ class TestGettingPrices(unittest.TestCase):
 	def test_getting_prices4(self):
 		data = read_case('price_testcase4')
 		expected = ('NA', 'NA', '775040')
-		self.assertEqual(get_prices(data), expected)		
-
-if __name__ == "__main__":
-	unittest.main()
+		self.assertEqual(get_prices(data), expected)
