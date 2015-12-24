@@ -80,8 +80,7 @@ def get_description(parsed_page):
 
 def get_city(parsed_page):
 	city = list(parsed_page.find(name = 'dd', attrs = {'class':'item'}))[1].text
-	city = remove_shit(city)
-	return city
+	return city.split()[0]
 
 def get_milage(parsed_page):
 	milage = list(parsed_page.find_all(name = 'p', attrs = {'class':'item-param'}))[2].text
@@ -168,8 +167,9 @@ if __name__ == "__main__":
 						datefmt='%H:%M:%S')
 	logger = logging.getLogger(__name__)
 	
+
 	logger.info('Reading csv with links on cars ...')
-	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), nrows = 10)#"ISO-8859-1"
+	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), nrows = 1000)#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	logger.info('Parsing cars pages ...')
