@@ -8,43 +8,25 @@ def remove_shit(s):
 	return re.sub('[ \n$€]', '', s)
 
 def get_prices(parsed_page):
-	main_price = parsed_page.find_all(name = 'div', attrs = {'class':'price-seller'})[0].text
-	price_dollar = remove_shit(main_price)
-	price_euro, price_grn = ['NA']*2
+	main_price = [parsed_page.find_all(name = 'div', attrs = {'class':'price-seller'})[0].text]
+	price_at_rate = []
 	try:
-		prices = list(parsed_page.find_all(name = 'div', attrs = {'class':'price-at-rate'}))[0].text.rsplit('/', 1)
-		if '$' in main_price:
-			if '€' in prices[0]:
-				price_euro =  remove_shit(prices[0])
-				price_grn =  remove_shit(prices[1])
-				price_grn = ''.join(re.findall('[\d]', price_grn))
-			else:
-				price_euro =  remove_shit(prices[1])
-				price_grn =  remove_shit(prices[0])
-				price_grn = ''.join(re.findall('[\d]', price_grn))
-		elif '€' in main_price:
-			price_euro = remove_shit(main_price)
-			if '$' in prices[0]:
-				price_dollar =  remove_shit(prices[0])
-				price_grn =  remove_shit(prices[1])
-				price_grn = ''.join(re.findall('[\d]', price_grn))
-			else:
-				price_dollar =  remove_shit(prices[1])
-				price_grn =  remove_shit(prices[0])
-				price_grn = ''.join(re.findall('[\d]', price_grn))
-		elif 'грн' in main_price:
-			price_grn = remove_shit(main_price)
-			price_grn = ''.join(re.findall('[\d]', price_grn))
-			if '€' in prices[0]:
-				price_euro =  remove_shit(prices[0])
-				price_dollar =  remove_shit(prices[1])
-			else:
-				price_euro =  remove_shit(prices[1])
-				price_dollar =  remove_shit(prices[0])
+		price_at_rate = list(parsed_page.find_all(name = 'div', attrs = {'class':'price-at-rate'}))[0].text.rsplit('/')
 	except:
 		pass
-
-	return price_dollar, price_euro, price_grn
+	prices = main_price + price_at_rate
+	df = pd.DataFrame([['price_dollar', '$', 'NA'], 
+					   ['price_euro', '€', 'NA'], 
+					   ['price_grn', 'грн.', 'NA']],
+					columns = ['currency', 'sign', 'value'])
+	try:
+		for i in range(3):
+			for j in range(len(prices)):
+				if df.iloc[i, 1] in prices[j]:
+					df.ix[i, 'value'] = ''.join(re.findall('[\d]', remove_shit(prices[j])))
+	except:
+		pass
+	return df.value[0], df.value[1], df.value[2]
 
 def get_technical_characteristics(parsed_page):
 	transmission, drive_type, doors, color, seats, fuel, engine_v = 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'
