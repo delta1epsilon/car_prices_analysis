@@ -2,13 +2,7 @@ from bs4 import BeautifulSoup
 import urllib.request as ur
 import pandas as pd
 import numpy as np
-import logging
 import re
-
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(levelname)-4s %(message)s',
-                    datefmt='%H:%M:%S')
-logger = logging.getLogger(__name__)
 
 def get_links(url, site_url = 'https://auto.ria.com'):
     def get_cars_links(url, site_url = 'https://auto.ria.com'):
@@ -68,39 +62,65 @@ def clean_models(link):
     link = [re.sub(' \(все\)', '', l) for l in link]
     return [re.sub('груз.', 'gruz', l) for l in link]
 
-target_cars = ['Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Opel'#, # German - 5 ~72000
-                # 'Acura', 'Honda', 'Lexus', 'Mazda', 'Mitsubishi', 'Nissan', 'Subaru', 'Suzuki', 'Toyota', # Japanese - 9
-                # 'Kia', 'Hyundai'#, 'Daewoo', # Korean - 3
-                # 'Chevrolet', 'Cadillac', 'Ford', 'Chrysler', 'Dodge', 'Jeep' # American - 6
-                ]
+if __name__ == "__main__":
+    import logging, argparse, os
 
-site_url = 'https://auto.ria.com'
-map_bu_url = 'https://auto.ria.com/uk/map/bu/'
-map_bu_page = ur.urlopen(map_bu_url).read()
-map_bu_parsed = BeautifulSoup(map_bu_page, 'html.parser')
+    logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)-4s %(message)s',
+                    datefmt='%H:%M:%S')
+    logger = logging.getLogger(__name__)
 
-logger.info('Collecting links on brands ...')
-brand_links = get_brands_links(map_bu_parsed)
+    current_dir = os.path.abspath(os.path.dirname(__file__))
 
-logger.info('Collecting links on models ...')
-brand_model = get_models_links(brand_links)
+    target_cars = ['Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Opel'#, # German - 5 ~72000
+                    # 'Acura', 'Honda', 'Lexus', 'Mazda', 'Mitsubishi', 'Nissan', 'Subaru', 'Suzuki', 'Toyota', # Japanese - 9
+                    # 'Kia', 'Hyundai'#, 'Daewoo', # Korean - 3
+                    # 'Chevrolet', 'Cadillac', 'Ford', 'Chrysler', 'Dodge', 'Jeep' # American - 6
+                    ]
 
-#====== get cars links
-logger.info('Collecting links on cars ...')
-brand_model_link = pd.DataFrame(columns = ['brand', 'model', 'link'])
-for i in range(brand_model.shape[0]):    
-    df = None
-    while df is None:
-        try:
-            df = get_links(brand_model.link[i])
-        except:
-            pass
-    brand_model_link = brand_model_link.append(df, ignore_index = True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--brand", type=str, nargs='+', dest = 'car_brands',
+                        default = target_cars, 
+                        help="""write list of car brands for getting links; 
+                                Available brands: 
+                                    Audi, BMW, Mercedes-Benz, Volkswagen, Opel, 
+                                    Acura, Honda, Lexus, Mazda, Mitsubishi, 
+                                    Nissan, Subaru, Suzuki, Toyota,
+                                    Kia, Hyundai, Daewoo,
+                                    Chevrolet, Cadillac, Ford, Chrysler, Dodge, Jeep"""
+                        )
+    parser.add_argument("--output_to", type=str, dest = 'output_filename',
+                        default = "collected_cars_links.csv", help="write cars links to")
+    args = parser.parse_args()
 
-# remove/replace 'все', 'груз.', 'пасс.' from links and models
-brand_model_link.link = clean_links(brand_model_link.link)
-brand_model_link.model = clean_models(brand_model_link.model)
+    target_cars = args.car_brands
 
-file_name = 'german_cars_links.csv'#'collected_cars_links.csv'
-brand_model_link.to_csv(file_name)
-logger.info('{0} car links were collected and saved into {1}'.format(brand_model_link.shape[0], file_name))
+    site_url = 'https://auto.ria.com'
+    map_bu_url = 'https://auto.ria.com/uk/map/bu/'
+    map_bu_page = ur.urlopen(map_bu_url).read()
+    map_bu_parsed = BeautifulSoup(map_bu_page, 'html.parser')
+
+    logger.info('Collecting links on brands ...')
+    brand_links = get_brands_links(map_bu_parsed)
+
+    logger.info('Collecting links on models ...')
+    brand_model = get_models_links(brand_links)
+
+    #====== get cars links
+    logger.info('Collecting links on cars ...')
+    brand_model_link = pd.DataFrame(columns = ['brand', 'model', 'link'])
+    for i in range(brand_model.shape[0]):    
+        df = None
+        while df is None:
+            try:
+                df = get_links(brand_model.link[i])
+            except:
+                pass
+        brand_model_link = brand_model_link.append(df, ignore_index = True)
+
+    # remove/replace 'все', 'груз.', 'пасс.' from links and models
+    brand_model_link.link = clean_links(brand_model_link.link)
+    brand_model_link.model = clean_models(brand_model_link.model)
+
+    brand_model_link.to_csv(os.path.join(current_dir, args.output_filename))
+    logger.info('{0} car links were collected and saved into {1}'.format(brand_model_link.shape[0], args.output_filename))

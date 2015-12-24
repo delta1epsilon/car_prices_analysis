@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--links_in", type=str, dest = 'cars_links_filename',
-	                    default = "german_cars_links.csv", help="write file name with cars links")
+	                    default = "collected_cars_links.csv", help="write file name with cars links")
 	parser.add_argument("--output_to", type=str, dest = 'output_filename',
 	                    default = "autoria_cars_data.csv", help="write output filename")
 	args = parser.parse_args()
@@ -186,6 +186,5 @@ if __name__ == "__main__":
 		df['link'] = cars_links.link[i]
 		cars = cars.append(df, ignore_index = True)
 
-	# file_name = 'autoria_german_cars_data.csv'
 	cars.to_csv(os.path.join(current_dir, args.output_filename))
 	logger.info('The data was saved into {0}'.format(args.output_filename))
