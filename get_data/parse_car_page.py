@@ -105,12 +105,17 @@ def get_year(parsed_page):
 	return int(parsed_page.find_all(name = 'span', attrs = {'class':'year'})[0].string)
 
 def get_additional_data(parsed_page):
-	additional_data = 'NA'
+	additional_data = ''
 	try:
-		additional_data = list(parsed_page.find_all(name = 'p', attrs = {'class':'additional-data'}))[0].text    
+		data = list(parsed_page.find_all(name = 'p', attrs = {'class':'additional-data'}))
+		for i in range(len(data)):
+		    additional_data = additional_data + ' ' + re.sub('[\n\r]', '', data[i].text)
 	except: 
 		pass
-	return re.sub('[\n\r]', '', additional_data)
+	if additional_data == '':
+		return 'NA'
+	else: 
+		return ' '.join(additional_data.split())
 
 def get_page_add_date(parsed_page):
 	return list(parsed_page.find_all(name = 'strong', attrs = {'id':'final_page__add_date'}))[0].text.rsplit(' ', 1)[0]
