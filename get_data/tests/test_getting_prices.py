@@ -34,3 +34,8 @@ class TestGettingPrices(unittest.TestCase):
 		data = read_case('price_testcase4')
 		expected = ('NA', 'NA', '775040')
 		self.assertEqual(get_prices(data), expected)
+
+	def test_getting_prices5(self):
+		data = read_case('testcase')
+		expected = ('33549', '30606', '837400')
+		self.assertEqual(get_prices(data), expected)

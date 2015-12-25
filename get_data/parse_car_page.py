@@ -96,8 +96,7 @@ def get_milage(parsed_page):
 
 def get_body(parsed_page):
 	body = parsed_page.find_all(name = 'strong', attrs = {'id':'final_page__characteristic_body_name'})[0].string
-	body = remove_shit(body)
-	return body
+	return remove_shit(body)
 
 def get_car_type(parsed_page):
 	car_type = list(parsed_page.find(name = 'p', attrs = {'class':'item-param'}))[3].string
