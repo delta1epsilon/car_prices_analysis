@@ -81,7 +81,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--brand", type=str, nargs='+', dest = 'car_brands',
                         default = target_cars, 
-                        help="""write list of car brands for getting links; 
+                        help="""list of car brands for getting links; 
                                 Available brands: 
                                     Audi, BMW, Mercedes-Benz, Volkswagen, Opel, 
                                     Acura, Honda, Lexus, Mazda, Mitsubishi, 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
                                     Chevrolet, Cadillac, Ford, Chrysler, Dodge, Jeep"""
                         )
     parser.add_argument("--output_to", type=str, dest = 'output_filename',
-                        default = "collected_cars_links.csv", help="write cars links to")
+                        default = "collected_cars_links.csv", help="name of csv file to write links in")
     args = parser.parse_args()
 
     target_cars = args.car_brands

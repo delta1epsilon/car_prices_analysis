@@ -19,7 +19,7 @@ data = read_case('testcase')
 class TestGettingDescriptions(unittest.TestCase):
 
 	def test_getting_technical_characteristics(self):
-		expected = ('Типтронік', 'Повний', 5, 'Сірий', 5, 'Дизель', 2)
+		expected = ('Типтронік', 'Повний', 5, 'Сірий', 5, 'Дизель', '2')
 		self.assertEqual(get_technical_characteristics(data), expected)
 
 	def test_checking_if_uncustomed(self):

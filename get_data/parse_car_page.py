@@ -46,7 +46,7 @@ def get_technical_characteristics(parsed_page):
 		elif char[0] == 'Паливо:':
 			fuel = char[1]
 		elif 'Об\'єм двигуна:' in char[0]:
-			engine_v = int(''.join(re.findall('[\d.]', char[0])))
+			engine_v = ''.join(re.findall('[\d.]', char[0]))
 
 	return transmission, drive_type, doors, color, seats, fuel, engine_v
 
@@ -159,9 +159,9 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--links_in", type=str, dest = 'cars_links_filename',
-	                    default = "collected_cars_links.csv", help="write file name with cars links")
+	                    default = "collected_cars_links.csv", help="name of csv file with cars links")
 	parser.add_argument("--output_to", type=str, dest = 'output_filename',
-	                    default = "autoria_cars_data.csv", help="write output filename")
+	                    default = "autoria_cars_data.csv", help="name of csv file to write data in")
 	args = parser.parse_args()
 
 	logging.basicConfig(level=logging.INFO,
@@ -171,7 +171,7 @@ if __name__ == "__main__":
 	
 
 	logger.info('Reading csv with links on cars ...')
-	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), nrows = 10)#"ISO-8859-1"
+	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename))#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	logger.info('Parsing cars pages ...')
@@ -179,6 +179,7 @@ if __name__ == "__main__":
 									'milage', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 									'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 
 									'extraction_date', 'brand', 'model', 'link'])
+	m = round(cars_links.shape[0] / 20)
 	for i in range(cars_links.shape[0]):
 		# print('Parsing car page: ', i)
 		df = pd.DataFrame([['NA']*21], columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
@@ -192,6 +193,8 @@ if __name__ == "__main__":
 		df['model'] = cars_links.model[i]
 		df['link'] = cars_links.link[i]
 		cars = cars.append(df, ignore_index = True)
+		if i!=0 and i%m == 0:
+			logger.info('	Parsed {0}% of car pages'.format(round((100*i)/cars_links.shape[0])))
 
 	cars.to_csv(os.path.join(current_dir, args.output_filename))
 	logger.info('The data was saved into {0}'.format(args.output_filename))
