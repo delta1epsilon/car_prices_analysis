@@ -54,13 +54,14 @@ def get_models_links(brand_links):
     return brand_model
 
 def clean_links(link):
-    pattern = re.compile("(все|груз.|пасс.)", re.I)
+    pattern = re.compile("(все|груз.|пасс.|пас.)", re.I)
     return [pattern.sub('', l) for l in link]
 
-def clean_models(link):
-    link = [re.sub('пасс.', 'pass', l) for l in link]
-    link = [re.sub(' \(все\)', '', l) for l in link]
-    return [re.sub('груз.', 'gruz', l) for l in link]
+def clean_models(model):
+    model = [re.sub('пасс.', 'pass', l) for l in model]
+    model = [re.sub('пас.', 'pass', l) for l in model]
+    model = [re.sub(' \(все\)', '', l) for l in model]
+    return [re.sub('груз.', 'gruz', l) for l in model]
 
 if __name__ == "__main__":
     import logging, argparse, os

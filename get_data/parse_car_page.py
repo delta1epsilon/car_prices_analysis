@@ -78,9 +78,10 @@ def get_description(parsed_page):
 		pass
 	return description 
 
-def get_city(parsed_page):
-	city = list(parsed_page.find(name = 'dd', attrs = {'class':'item'}))[1].text
-	return city.split()[0]
+def get_location(parsed_page):
+	region = parsed_page.find_all(name = 'span', attrs = {'id':'final_page__breadcrumbs_state'})[0].text
+	city = parsed_page.find_all(name = 'span', attrs = {'id':'final_page__breadcrumbs_city'})[0].text
+	return region, city
 
 def get_milage(parsed_page):
 	data = list(parsed_page.find(name = 'div', attrs = {'class':'characteristic delimeter'}))
@@ -134,7 +135,7 @@ def parse_car_page(url):
 	car_type = get_car_type(car_page_parsed)
 	body = get_body(car_page_parsed)
 	milage = get_milage(car_page_parsed)
-	city = get_city(car_page_parsed)
+	region, city = get_location(car_page_parsed)
 	transmission, drive_type, doors, color, seats, fuel, engine_v = get_technical_characteristics(car_page_parsed)
 	user_id = get_user_id(car_page_parsed)    
 	description = get_description(car_page_parsed)
@@ -143,10 +144,10 @@ def parse_car_page(url):
 	extraction_date = get_extraction_date()
 	
 	df = pd.DataFrame([[year, price_dollar, price_euro, price_grn, uncustomed, car_type, body, 
-						milage, city, transmission, drive_type, doors, seats, color, 
+						milage, region, city, transmission, drive_type, doors, seats, color, 
 						fuel, engine_v, user_id, additional_data, description, page_add_date, extraction_date]],
 					columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
-						'milage', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
+						'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 'extraction_date'])
 
 	return df
@@ -171,19 +172,19 @@ if __name__ == "__main__":
 	
 
 	logger.info('Reading csv with links on cars ...')
-	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename))#"ISO-8859-1"
+	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), encoding="ISO-8859-1")#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	logger.info('Parsing cars pages ...')
 	cars = pd.DataFrame(columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
-									'milage', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
+									'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 									'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 
 									'extraction_date', 'brand', 'model', 'link'])
 	m = round(cars_links.shape[0] / 20)
 	for i in range(cars_links.shape[0]):
 		# print('Parsing car page: ', i)
-		df = pd.DataFrame([['NA']*21], columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
-						'milage', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
+		df = pd.DataFrame([['NA']*22], columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
+						'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 'extraction_date'])
 		try:
 			df = parse_car_page(cars_links.link[i])
