@@ -60,6 +60,15 @@ def check_if_uncustomed(parsed_page):
 		pass
 	return uncustomed 
 
+def check_if_after_accident(parsed_page):
+	accident = 0
+	try:
+	    if 'ДТП' in parsed_page.find(name = 'p', attrs = {'class':'item-param'}).text:
+	        accident = 1
+    except:
+    	pass
+	return accident
+
 def get_user_id(parsed_page):
 	user_id = 'NA'
 	try:
@@ -144,12 +153,13 @@ def parse_car_page(url):
 	description = get_description(car_page_parsed)
 	additional_data = get_additional_data(car_page_parsed)
 	page_add_date = get_page_add_date(car_page_parsed)
+	after_accident = check_if_after_accident(car_page_parsed)
 	extraction_date = get_extraction_date()
 	
-	df = pd.DataFrame([[year, price_dollar, price_euro, price_grn, uncustomed, car_type, body, 
+	df = pd.DataFrame([[year, price_dollar, price_euro, price_grn, uncustomed, after_accident, car_type, body, 
 						milage, region, city, transmission, drive_type, doors, seats, color, 
 						fuel, engine_v, user_id, additional_data, description, page_add_date, extraction_date]],
-					columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
+					columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
 						'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 'extraction_date'])
 
@@ -179,14 +189,14 @@ if __name__ == "__main__":
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	logger.info('Parsing cars pages ...')
-	cars = pd.DataFrame(columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
+	cars = pd.DataFrame(columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
 									'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 									'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 
 									'extraction_date', 'brand', 'model', 'link'])
 	m = round(cars_links.shape[0] / 20)
 	for i in range(cars_links.shape[0]):
 		# print('Parsing car page: ', i)
-		df = pd.DataFrame([['NA']*22], columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'car_type', 'body', 
+		df = pd.DataFrame([['NA']*23], columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
 						'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
 						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 'extraction_date'])
 		try:
