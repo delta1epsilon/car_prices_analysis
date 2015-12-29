@@ -100,8 +100,11 @@ def get_body(parsed_page):
 	return remove_shit(body)
 
 def get_car_type(parsed_page):
-	car_type = list(parsed_page.find(name = 'p', attrs = {'class':'item-param'}))[3].string
-	return remove_shit(car_type)
+	data_list = list(parsed_page.find_all(name = 'p', attrs = {'class':'item-param'}))
+	for item in data_list:
+	    if 'Тип транспорту' in item.text:
+	        car_type = item
+	return remove_shit(list(car_type)[3].string)
 
 def get_year(parsed_page):
 	return int(parsed_page.find_all(name = 'span', attrs = {'class':'year'})[0].string)
@@ -197,5 +200,5 @@ if __name__ == "__main__":
 		if i!=0 and i%m == 0:
 			logger.info('	Parsed {0}% of car pages'.format(round((100*i)/cars_links.shape[0])))
 
-	cars.to_csv(os.path.join(current_dir, args.output_filename))
+	cars.to_csv(os.path.join(current_dir, args.output_filename), index=False)
 	logger.info('The data was saved into {0}'.format(args.output_filename))
