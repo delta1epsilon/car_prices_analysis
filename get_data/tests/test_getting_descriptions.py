@@ -5,7 +5,7 @@ import urllib.request as ur
 import os
 
 from get_data.parse_car_page import (get_technical_characteristics, check_if_uncustomed, get_user_id, 
-									 get_city, get_milage, get_body, get_car_type, get_year)
+									 get_location, get_milage, get_body, get_car_type, get_year)
 
 def read_case(filename):
 	current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -30,9 +30,9 @@ class TestGettingDescriptions(unittest.TestCase):
 		expected = 'NA'
 		self.assertEqual(get_user_id(data), expected)
 
-	def test_getting_city(self):
-		expected = 'Одеса'
-		self.assertEqual(get_city(data), expected)
+	def test_getting_location(self):
+		expected = ('Одеська область', 'Одеса')
+		self.assertEqual(get_location(data), expected)
 
 	def test_getting_milage(self):
 		expected = 'NA'
