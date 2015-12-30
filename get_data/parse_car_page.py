@@ -63,10 +63,10 @@ def check_if_uncustomed(parsed_page):
 def check_if_after_accident(parsed_page):
 	accident = 0
 	try:
-	    if 'ДТП' in parsed_page.find(name = 'p', attrs = {'class':'item-param'}).text:
-	        accident = 1
-    except:
-    	pass
+		if 'ДТП' in parsed_page.find(name = 'p', attrs = {'class':'item-param'}).text:
+			accident = 1
+	except:
+		pass
 	return accident
 
 def get_user_id(parsed_page):
@@ -96,12 +96,12 @@ def get_milage(parsed_page):
 	data = list(parsed_page.find(name = 'div', attrs = {'class':'characteristic delimeter'}))
 	milage = 'NA'
 	for l in data:
-	    try:
-	        if 'Пробіг' in l.text:
-	            milage = ''.join(re.findall('[\d]', l.text))
-	            milage = int(milage)
-	    except:
-	        pass
+		try:
+			if 'Пробіг' in l.text:
+				milage = ''.join(re.findall('[\d]', l.text))
+				milage = int(milage)
+		except:
+			pass
 	return milage
 
 def get_body(parsed_page):
@@ -111,8 +111,8 @@ def get_body(parsed_page):
 def get_car_type(parsed_page):
 	data_list = list(parsed_page.find_all(name = 'p', attrs = {'class':'item-param'}))
 	for item in data_list:
-	    if 'Тип транспорту' in item.text:
-	        car_type = item
+		if 'Тип транспорту' in item.text:
+			car_type = item
 	return remove_shit(list(car_type)[3].string)
 
 def get_year(parsed_page):
@@ -123,13 +123,25 @@ def get_additional_data(parsed_page):
 	try:
 		data = list(parsed_page.find_all(name = 'p', attrs = {'class':'additional-data'}))
 		for i in range(len(data)):
-		    additional_data = additional_data + ' ' + re.sub('[\n\r]', '', data[i].text)
+			additional_data = additional_data + ' ' + re.sub('[\n\r]', '', data[i].text)
 	except: 
 		pass
 	if additional_data == '':
 		return 'NA'
 	else: 
 		return ' '.join(additional_data.split())
+
+def get_status(parsed_page):
+    status = 'NA'
+    try:
+        error = parsed_page.find_all(name = 'div', attrs = {'class':'error'})[0].text
+        if 'Авто видалено' in error:
+            status = 'removed'
+        elif 'продано' in error:
+            status = 'sold'
+    except:
+        pass
+    return status
 
 def get_page_add_date(parsed_page):
 	return list(parsed_page.find_all(name = 'strong', attrs = {'id':'final_page__add_date'}))[0].text.rsplit(' ', 1)[0]
@@ -152,16 +164,17 @@ def parse_car_page(url):
 	user_id = get_user_id(car_page_parsed)    
 	description = get_description(car_page_parsed)
 	additional_data = get_additional_data(car_page_parsed)
+	status = get_status(car_page_parsed)
 	page_add_date = get_page_add_date(car_page_parsed)
 	after_accident = check_if_after_accident(car_page_parsed)
 	extraction_date = get_extraction_date()
 	
 	df = pd.DataFrame([[year, price_dollar, price_euro, price_grn, uncustomed, after_accident, car_type, body, 
 						milage, region, city, transmission, drive_type, doors, seats, color, 
-						fuel, engine_v, user_id, additional_data, description, page_add_date, extraction_date]],
+						fuel, engine_v, user_id, additional_data, description, status, page_add_date, extraction_date]],
 					columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
 						'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
-						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 'extraction_date'])
+						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'status', 'page_add_date', 'extraction_date'])
 
 	return df
 
@@ -173,9 +186,9 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--links_in", type=str, dest = 'cars_links_filename',
-	                    default = "collected_cars_links.csv", help="name of csv file with cars links")
+						default = "collected_cars_links.csv", help="name of csv file with cars links")
 	parser.add_argument("--output_to", type=str, dest = 'output_filename',
-	                    default = "autoria_cars_data.csv", help="name of csv file to write data in")
+						default = "autoria_cars_data.csv", help="name of csv file to write data in")
 	args = parser.parse_args()
 
 	logging.basicConfig(level=logging.INFO,
@@ -188,21 +201,20 @@ if __name__ == "__main__":
 	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), encoding="ISO-8859-1")#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
+	features = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
+				'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
+				'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'status', 'page_add_date', 'extraction_date']
+
 	logger.info('Parsing cars pages ...')
-	cars = pd.DataFrame(columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
-									'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
-									'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 
-									'extraction_date', 'brand', 'model', 'link'])
+	cars = pd.DataFrame(columns = features + ['brand', 'model', 'link'])
 	m = round(cars_links.shape[0] / 20)
 	for i in range(cars_links.shape[0]):
 		# print('Parsing car page: ', i)
-		df = pd.DataFrame([['NA']*23], columns = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
-						'milage', 'region', 'city', 'transmission', 'drive_type', 'doors', 'seats', 'color', 
-						'fuel', 'engine_v', 'user_id', 'additional_data', 'description', 'page_add_date', 'extraction_date'])
+		df = pd.DataFrame([['NA']*24], columns = features)
 		try:
 			df = parse_car_page(cars_links.link[i])
 		except:
-			 pass
+			pass
 		df['brand'] = cars_links.brand[i]
 		df['model'] = cars_links.model[i]
 		df['link'] = cars_links.link[i]
