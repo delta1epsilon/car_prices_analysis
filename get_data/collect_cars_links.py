@@ -72,8 +72,11 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     current_dir = os.path.abspath(os.path.dirname(__file__))
+    directory = os.path.join(current_dir, 'raw_data')
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    target_cars = ['Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Opel'#, # German - 5 ~72000
+    target_cars = ['Acura'#'Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Opel'#, # German - 5 ~72000
                     # 'Acura', 'Honda', 'Lexus', 'Mazda', 'Mitsubishi', 'Nissan', 'Subaru', 'Suzuki', 'Toyota', # Japanese - 9
                     # 'Kia', 'Hyundai'#, 'Daewoo', # Korean - 3
                     # 'Chevrolet', 'Cadillac', 'Ford', 'Chrysler', 'Dodge', 'Jeep' # American - 6
@@ -123,5 +126,5 @@ if __name__ == "__main__":
     brand_model_link.link = clean_links(brand_model_link.link)
     brand_model_link.model = clean_models(brand_model_link.model)
 
-    brand_model_link.to_csv(os.path.join(current_dir, args.output_filename))
-    logger.info('{0} car links were collected and saved into {1}'.format(brand_model_link.shape[0], args.output_filename))
+    brand_model_link.to_csv(os.path.join(directory, args.output_filename))
+    logger.info('{0} car links were collected and saved into {1}'.format(brand_model_link.shape[0], 'raw_data/'+args.output_filename))

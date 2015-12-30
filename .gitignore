@@ -1,3 +1,6 @@
+get_data/raw_data/*
+get_data/tidy_data/*
+
 __pycache__
 .ipynb_checkpoints
 get_data/*.ipynb

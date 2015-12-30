@@ -183,6 +183,7 @@ if __name__ == "__main__":
 	import logging, argparse, os
 
 	current_dir = os.path.abspath(os.path.dirname(__file__))
+	directory = os.path.join(current_dir, 'raw_data')
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--links_in", type=str, dest = 'cars_links_filename',
@@ -198,7 +199,7 @@ if __name__ == "__main__":
 	
 
 	logger.info('Reading csv with links on cars ...')
-	cars_links = pd.read_csv(os.path.join(current_dir, args.cars_links_filename), encoding="ISO-8859-1")#"ISO-8859-1"
+	cars_links = pd.read_csv(os.path.join(directory, args.cars_links_filename), encoding="ISO-8859-1")#"ISO-8859-1"
 	logger.info('Got {0} links on cars'.format(cars_links.shape[0]))
 
 	features = ['year', 'price_dollar', 'price_euro', 'price_grn', 'uncustomed', 'after_accident', 'car_type', 'body', 
@@ -222,5 +223,5 @@ if __name__ == "__main__":
 		if i!=0 and i%m == 0:
 			logger.info('	Parsed {0}% of car pages'.format(round((100*i)/cars_links.shape[0])))
 
-	cars.to_csv(os.path.join(current_dir, args.output_filename), index=False)
-	logger.info('The data was saved into {0}'.format(args.output_filename))
+	cars.to_csv(os.path.join(directory, args.output_filename), index=False)
+	logger.info('The data was saved into {0}'.format('raw_data/'+args.output_filename))
