@@ -15,9 +15,9 @@ def get_prices(parsed_page):
 	except:
 		pass
 	prices = main_price + price_at_rate
-	df = pd.DataFrame([['price_dollar', '$', 'NA'], 
-					   ['price_euro', '€', 'NA'], 
-					   ['price_grn', 'грн.', 'NA']],
+	df = pd.DataFrame([['price_dollar', '$', ''], 
+					   ['price_euro', '€', ''], 
+					   ['price_grn', 'грн.', '']],
 					columns = ['currency', 'sign', 'value'])
 	try:
 		for i in range(3):
@@ -29,7 +29,7 @@ def get_prices(parsed_page):
 	return df.value[0], df.value[1], df.value[2]
 
 def get_technical_characteristics(parsed_page):
-	transmission, drive_type, doors, color, seats, fuel, engine_v = 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'
+	transmission, drive_type, doors, color, seats, fuel, engine_v = ['']*7
 	characteristics = list(parsed_page.find(name = 'dl', attrs = {'class':'unordered-list', 'style':'margin-top: 10px;'}))
 	for char in characteristics[1:]:
 		char = char.text.rsplit(None, 1)
@@ -70,7 +70,7 @@ def check_if_after_accident(parsed_page):
 	return accident
 
 def get_user_id(parsed_page):
-	user_id = 'NA'
+	user_id = ''
 	try:
 		user_id = list(parsed_page.find_all(name = 'dl', attrs = {'class':'info-user'}))[0].find_all('a')[0].get('href')
 		user_id = ''.join(re.findall('[\d]', user_id))
@@ -79,7 +79,7 @@ def get_user_id(parsed_page):
 	return user_id
 
 def get_description(parsed_page):
-	description = 'NA'
+	description = ''
 	try:
 		description = list(parsed_page.find_all(name = 'p', attrs = {'class':'description-order'}))[0].text
 		description = re.sub('[\n\r]', '', description)
@@ -94,7 +94,7 @@ def get_location(parsed_page):
 
 def get_milage(parsed_page):
 	data = list(parsed_page.find(name = 'div', attrs = {'class':'characteristic delimeter'}))
-	milage = 'NA'
+	milage = ''
 	for l in data:
 		try:
 			if 'Пробіг' in l.text:
@@ -127,12 +127,12 @@ def get_additional_data(parsed_page):
 	except: 
 		pass
 	if additional_data == '':
-		return 'NA'
+		return ''
 	else: 
 		return ' '.join(additional_data.split())
 
 def get_status(parsed_page):
-    status = 'NA'
+    status = ''
     try:
         error = parsed_page.find_all(name = 'div', attrs = {'class':'error'})[0].text
         if 'Авто видалено' in error:
@@ -210,7 +210,7 @@ if __name__ == "__main__":
 	m = round(cars_links.shape[0] / 20)
 	for i in range(cars_links.shape[0]):
 		# print('Parsing car page: ', i)
-		df = pd.DataFrame([['NA']*24], columns = features)
+		df = pd.DataFrame([['']*24], columns = features)
 		try:
 			df = parse_car_page(cars_links.link[i])
 		except:

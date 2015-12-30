@@ -27,12 +27,12 @@ class TestGettingPrices(unittest.TestCase):
 
 	def test_getting_prices3(self):
 		data = read_case('price_testcase3')
-		expected = ('32000', 'NA', 'NA')
+		expected = ('32000', '', '')
 		self.assertEqual(get_prices(data), expected)		
 
 	def test_getting_prices4(self):
 		data = read_case('price_testcase4')
-		expected = ('NA', 'NA', '775040')
+		expected = ('', '', '775040')
 		self.assertEqual(get_prices(data), expected)
 
 	def test_getting_prices5(self):

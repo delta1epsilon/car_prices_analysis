@@ -27,7 +27,7 @@ class TestGettingDescriptions(unittest.TestCase):
 		self.assertEqual(check_if_uncustomed(data), expected)
 
 	def test_getting_user_id(self):
-		expected = 'NA'
+		expected = ''
 		self.assertEqual(get_user_id(data), expected)
 
 	def test_getting_location(self):
@@ -35,7 +35,7 @@ class TestGettingDescriptions(unittest.TestCase):
 		self.assertEqual(get_location(data), expected)
 
 	def test_getting_milage(self):
-		expected = 'NA'
+		expected = ''
 		self.assertEqual(get_milage(data), expected)
 
 	def test_getting_body(self):
