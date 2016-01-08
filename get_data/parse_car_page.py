@@ -223,5 +223,5 @@ if __name__ == "__main__":
 		if i!=0 and i%m == 0:
 			logger.info('	Parsed {0}% of car pages'.format(round((100*i)/cars_links.shape[0])))
 
-	cars.to_csv(os.path.join(directory, args.output_filename), index=False)
+	cars.to_csv(os.path.join(directory, args.output_filename), index=False, encoding='utf-8')
 	logger.info('The data was saved into {0}'.format('raw_data/'+args.output_filename))
