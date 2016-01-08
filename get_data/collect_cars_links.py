@@ -94,7 +94,9 @@ if __name__ == "__main__":
                                     Chevrolet, Cadillac, Ford, Chrysler, Dodge, Jeep"""
                         )
     parser.add_argument("--output_to", type=str, dest = 'output_filename',
-                        default = "collected_cars_links.csv", help="name of csv file to write links in")
+                        default = "collected_cars_links.csv", 
+                        help="""name of csv file to write links in raw_data directory
+                                (raw_data directory will be created if it doesn't exist)""")
     args = parser.parse_args()
 
     target_cars = args.car_brands

@@ -187,9 +187,9 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--links_in", type=str, dest = 'cars_links_filename',
-						default = "collected_cars_links.csv", help="name of csv file with cars links")
+						default = "collected_cars_links.csv", help="name of csv file with cars links in raw_data directory")
 	parser.add_argument("--output_to", type=str, dest = 'output_filename',
-						default = "autoria_cars_data.csv", help="name of csv file to write data in")
+						default = "autoria_cars_data.csv", help="name of csv file to write data in raw_data directory")
 	args = parser.parse_args()
 
 	logging.basicConfig(level=logging.INFO,

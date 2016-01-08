@@ -38,8 +38,9 @@ if __name__ == "__main__":
 	logger = logging.getLogger(__name__)
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--raw_data', type=str, dest='raw_data_file', required=True,
-						help="csv file to be cleaned")
+	parser.add_argument('--raw_data_file', type=str, dest='raw_data_file', required=True,
+						help="""name of csv file in raw_data directory to be cleaned
+								(will be saved to tidy_data directory)""")
 	args = parser.parse_args()
 
 	if args.raw_data_file is None:
