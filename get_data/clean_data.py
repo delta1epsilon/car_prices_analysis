@@ -3,8 +3,8 @@ import numpy as np
 import re, time
 
 def remove_empty_rows(table):
-	table = table[list(table.columns[:-3])]
-	return table.iloc[~np.array(table.apply(lambda x: all(x.isnull()), axis=1))]
+	df = table[list(table.columns[:-3])]
+	return table.iloc[~np.array(df.apply(lambda x: all(x.isnull()), axis=1))]
 
 def leave_only_cars(table):
 	return table[table.car_type == 'Легкові']
